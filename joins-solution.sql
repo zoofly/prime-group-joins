@@ -41,15 +41,28 @@ addresses on addresses.id =customers.id;
     7
 
 -- 8. What is the total available on-hand quantity of diet pepsi?
-    select warehouse_product.on_hand
+    select sum(warehouse_product.on_hand), products.description
     from warehouse_product
     join products on products.id = warehouse_product.product_id
-    where products.description = 'diet pepsi';
+    where products.description = 'diet pepsi'
+    group by products.description;
     92 diet pepsi
 --Stretch
 -- 1. How much was the total cost for each order?
+    select sum(line_items.quantity * products.unit_price), orders.id, orders.order_date
+    from orders
+    join line_items on orders.id = line_items.order_id
+    join products on products.id = line_items.product_id
+    group by orders.id;  
 
 -- 2. How much has each customer spent in total?
-
+        SELECT SUM(products.unit_price*line_items.quantity) as total_cost, CONCAT(customers.first_name,' ', customers.last_name) as customers_names
+        FROM line_items
+        JOIN products ON products.id = line_items.product_id
+        JOIN orders ON orders.id = line_items.order_id
+        JOIN addresses ON addresses.id = orders.address_id
+        JOIN customers ON customers.id = addresses.customer_id
+        GROUP BY customers.last_name, customers.first_name;
 
 -- 3. How much has each customer spent in total? Customers who have spent $0 should still show up in the table. It should say 0, not NULL (research coalesce).
+        
